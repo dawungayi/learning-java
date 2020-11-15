@@ -18,18 +18,32 @@ public class Theater {
     // private Collection<Seat> seats = new Stack<>();      // all good.
 
     // testing diff data xtures
-    public List<Seat> seats = new ArrayList<>();
+    private List<Seat> seats = new ArrayList<>();
 
     // constructor
     public Theater (String theaterName, int numRows, int seatsPerRow) {
         this.theaterName = theaterName;
         this.numSeatsPerRow = seatsPerRow;
+        // seat positions and rows for determining prices
+        int minPremiumSeat = numSeatsPerRow / 3;
+        int maxPremiumSeat = numSeatsPerRow - numSeatsPerRow / 3;
+        int endOfFront = 'A' + numRows/3;
+        int startOfBack = 'A' + (numRows - numRows/3) - 1;
+
         int lastRow = 'A' + (numRows - 1);  // first row is always row A. last row is ascii for letter corresp 1st row + numRows
         // create a new seat for the number of seats per row for each row
         // at the end of the for loops, we get a sorted list. Pretty cool!
         for (char row='A'; row <= lastRow; row++) {
             for (int seatNum=1; seatNum <= seatsPerRow; seatNum++) {
-                Seat seat = new Seat(row + String.format("%02d", seatNum));
+                double price = 12.00;   // base price
+                // price xture: $14 for middle of front rows (first 3rd of rows); $7 for back rows seats (last 3rd of rows) and edge seats;
+                // $12 for all the rest
+                if (row < endOfFront && (seatNum >= minPremiumSeat && seatNum <= maxPremiumSeat)) {
+                    price = 14.00;
+                } else if (row > startOfBack || (seatNum < minPremiumSeat || seatNum > maxPremiumSeat)) {
+                    price = 7.00;
+                }
+                Seat seat = new Seat(row + String.format("%02d", seatNum), price);
                 seats.add(seat);    // add this seat object to the list of seats
             }
         }
@@ -38,6 +52,26 @@ public class Theater {
     public String getTheaterName() {
         return theaterName;
     }
+
+    // return a Collection, not just a list
+    public Collection<Seat> getSeats() {
+        return seats;
+    }
+
+    // add comparator for the purpose of sorting by prices
+    // watch out: this comparator is inconsistent with equals - returns 0 even when seat1 != seat2
+    // ==> more than 1 seat will return 0. only checks for prices :(
+    static final Comparator<Seat> PRICE_ORDER = new Comparator<Seat>() {
+        @Override
+        public int compare(Seat seat1, Seat seat2) {
+            if (seat1.getPrice() > seat2.getPrice())
+                return 1;
+            else if (seat1.getPrice() < seat2.getPrice())
+                return -1;
+            else    // both prices are equal
+                return 0;
+        }
+    };  // semi colon here needed!
 
     public void printSeats() {
         System.out.println("Here are all the seats in the " + theaterName + " theater:");
@@ -100,8 +134,9 @@ public class Theater {
         return requestedSeat.reserve();
          */
 
+        double genericPrice = 12.00;    // we only compare the seatNumber ffield, so we pass in a generic value for price
         // Using binary search ==> O(log n) - really good since the seats List is sorted and each elt in it is unique
-        Seat requestedSeat = new Seat(seatNumber);
+        Seat requestedSeat = new Seat(seatNumber, genericPrice);
         // of all seats, check for requestedSeat. Good thing is this takes in objects, and will use the compareTo method in our class.
         // binarySearch returns non-negative index if elt is found, else returns -(insertion_point index) ==> -ve elt
         int foundSeat = Collections.binarySearch(seats, requestedSeat, null);
@@ -124,10 +159,12 @@ public class Theater {
     // this will be a lot more efficient for searching
     public class Seat implements Comparable<Seat> {
         private final String seatNumber;
+        private double price;
         private boolean isReserved = false;
 
-        public Seat(String seatNumber) {
+        public Seat(String seatNumber, double price) {
             this.seatNumber = seatNumber;
+            this.price = price;
         }
 
         // this method is needed to implement the Comparable interface
@@ -140,6 +177,10 @@ public class Theater {
         // getter
         public String getSeatNumber() {
             return seatNumber;
+        }
+
+        public double getPrice() {
+            return price;
         }
 
         // reserve a seat

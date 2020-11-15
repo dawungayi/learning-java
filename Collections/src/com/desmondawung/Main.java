@@ -4,71 +4,51 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        intro();
+        manageTheater();
     }
 
-    public static void intro() {
+    public static void manageTheater() {
 
-        Theater amc = new Theater("AMC Penn Square Mall", 5, 10 );
+        Theater amc = new Theater("AMC Penn Square Mall", 8, 12);
         // v1(amc);
 
-        // shallow copy seats objects from amc.seats to seatCopy
-        // they are distinct lists, but they both point to the same object references
-        List<Theater.Seat> seatCopy = new ArrayList<>(amc.seats);
+        // amc.getSeats().get(1).reserve();
+        // amc.getSeats().get(1).reserve();
+        // amc.getSeats().
+        String seatName = "A02";
+        amc.reserveSeat(seatName);
+        amc.reserveSeat(seatName);
 
-        // to prove that they both refer to the same objects: one list changes an obj's fields, it is reflected in the other list
-        seatCopy.get(1).reserve();
-        amc.seats.get(1).reserve();
+        amc.reserveSeat("D02");
+        amc.reserveSeat("F11");
+
+        // printList(amc.getSeats()); // won't work for Collection return
+
+        // copy amc's list to the new List
+        List<Theater.Seat> reversedSeats = new ArrayList<>(amc.getSeats());
+        Collections.reverse(reversedSeats);
+        printList(reversedSeats);
+
+        // using comparator to sort by prices
+        List<Theater.Seat> priceSeats = new ArrayList<>(amc.getSeats());
+        priceSeats.add(amc.new Seat(  "A00", 13.00));   // creating a seat on the fly
+        priceSeats.add(amc.new Seat("B00", 13.00));
+        // sort is stable in that it does no swap elts if they don't need to be
+        Collections.sort(priceSeats, Theater.PRICE_ORDER);
+        System.out.println("After sorting by price:");
+        printList(priceSeats);
 
 
-        // original:
-        System.out.println("Original: ");
-        printList(amc.seats);
-        // System.out.println("seatCopy reversed: ");
-        // Collections.reverse(seatCopy);
-        System.out.println("seatCopy shuffled: ");
-        Collections.shuffle(seatCopy);
-        printList(seatCopy);
-
-        // get the min and max in a collection, according to sort order in the compareTo sort order in the Seat class
-        // still goes and finds min and max even after we've shuffled it.
-        Theater.Seat minSeat = Collections.min(seatCopy);
-        Theater.Seat maxSeat = Collections.max(seatCopy);
-
-        System.out.println("Min seat number: " + minSeat.getSeatNumber());
-        System.out.println("Max seat number: " + maxSeat.getSeatNumber());
-
-        // sort the shuffled array
-        sortList(seatCopy);
-        System.out.println("After sorting seatCopy:");
-        printList(seatCopy);
-
-        // Note: Do not use Collections.copy !!!
     }
 
     public static void printList(List<Theater.Seat> list) {
         for (Theater.Seat seat : list) {
-            System.out.print(seat.getSeatNumber() + ", ");
+            System.out.print(seat.getSeatNumber() +  " $" + seat.getPrice() + "; ");
         }
         System.out.println("\n========================");
     }
 
-    // public static void sortList(List<Theater.Seat> list) {
-    public static void sortList(List<? extends Theater.Seat> list) {    // using generic ==> more flexible
-        // we use bubble sort algorithm here => higher time complexity (O(n^2)) but better memory use than mergeSort
 
-        for(int i = 0; i < list.size(); i++) {
-            for (int j=i+1; j < list.size(); j++) {
-                // compare elt i with all subsequent elts in the list
-                // comparing two objects ==> we need to have the compareTo already setup in the Seat class
-                if(list.get(i).compareTo(list.get(j)) >= 0) {
-                    // swap i and j elts ==> larger elts bubble all the way up to the end of the array
-                    Collections.swap(list, i, j);
-                }
-
-            }
-        }
-    }
 
     public static void v1(Theater amc) {
         System.out.println(amc.getTheaterName());
