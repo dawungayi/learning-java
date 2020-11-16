@@ -31,7 +31,7 @@ public class Main {
 
         // using comparator to sort by prices
         List<Theater.Seat> priceSeats = new ArrayList<>(amc.getSeats());
-        priceSeats.add(amc.new Seat(  "A00", 13.00));   // creating a seat on the fly
+        priceSeats.add(amc.new Seat(  "A00", 13.00));   // creating a seat on the fly: inner class instantiation
         priceSeats.add(amc.new Seat("B00", 13.00));
         // sort is stable in that it does no swap elts if they don't need to be
         Collections.sort(priceSeats, Theater.PRICE_ORDER);

@@ -60,8 +60,8 @@ public class Theater {
 
     // add comparator for the purpose of sorting by prices
     // watch out: this comparator is inconsistent with equals - returns 0 even when seat1 != seat2
-    // ==> more than 1 seat will return 0. only checks for prices :(
-    static final Comparator<Seat> PRICE_ORDER = new Comparator<Seat>() {
+    // ==> more than 1 seat will return 0. only checks for prices :( ==> problem in sorted sets and sorted maps
+     static final Comparator<Seat> PRICE_ORDER = new Comparator<Seat>() {
         @Override
         public int compare(Seat seat1, Seat seat2) {
             if (seat1.getPrice() > seat2.getPrice())
@@ -168,7 +168,8 @@ public class Theater {
         }
 
         // this method is needed to implement the Comparable interface
-        // specify the field in the Seat class for comparison
+        // specify the field in the Seat class for comparison. This is consistent with equals :)
+        // No problems with sorted sets
         @Override
         public int compareTo(Seat seat) {
             return this.seatNumber.compareToIgnoreCase(seat.getSeatNumber());
