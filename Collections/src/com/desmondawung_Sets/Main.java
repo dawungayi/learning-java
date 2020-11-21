@@ -53,6 +53,16 @@ public class Main {
         System.out.println("All moons of all planets:");
         printHeavenlyBodies(moons);
 
+        // adding modified jupiter object - again - modified object to set
+        // temp (below) and jupiter (above): these 2 java objects in the set do NOT compare equal ==> set has no problem with this).
+        // similar with using an object as key in a map
+        HeavenlyBody temp = new HeavenlyBody("Jupiter", 4220);
+        planets.add(temp);
+        System.out.println("After adding Jupiter again: ");
+        printHeavenlyBodies(planets);   // yes we have 2 jupiter objects
+
+
+
     }
 
     // create planets
@@ -74,7 +84,7 @@ public class Main {
     public static void printHeavenlyBodies(Set<HeavenlyBody> setOfBodies) {
         // System.out.println("Planets");
         for (HeavenlyBody body : setOfBodies) {   // iterating thru the HashSet setOfBodies
-            System.out.println("\t" + body.getName());   // not in any order
+            System.out.println("\t" + body.getName() + ": " + body.getOrbitalPeriod());   // not in any order
         }
     }
 
